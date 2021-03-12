@@ -3,6 +3,7 @@ package io.alienhead.kleuth
 import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.RouteController
 import io.alienhead.kleuth.config.RouteMapperProperties
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ApplicationContext
 import org.springframework.context.event.EventListener
@@ -19,6 +20,8 @@ class RouteMapper(
   private val context: ApplicationContext,
   private var properties: RouteMapperProperties = RouteMapperProperties()
 ) {
+  private val logger = LoggerFactory.getLogger(RouteMapper::class.java)
+
   private var routesReady = false
 
   @EventListener(ApplicationReadyEvent::class)
@@ -27,20 +30,26 @@ class RouteMapper(
     if (properties.pathToPackage.isEmpty()) return
 
     if (properties.health.enabled) {
+      logger.info("Launching health endpoint at /${properties.health.endpoint} ")
       addHealthEndpoint()
     }
 
     val routes = getRoutes()
 
-    mapRoutes(routes)
+    logger.info("Discovered ${routes.size} possible routes.")
+
+    val mappedRoutes = mapRoutes(routes)
     routesReady = true
+
+    logger.info("$mappedRoutes routes have been mapped.")
   }
 
   private fun getRoutes(): Map<String, Any> {
     return context.getBeansWithAnnotation(Route::class.java) + context.getBeansWithAnnotation(RouteController::class.java)
   }
 
-  private fun mapRoutes(routes: Map<String, Any>) {
+  private fun mapRoutes(routes: Map<String, Any>): Int {
+    var count = 0
     routes.forEach {
       val classForRoute = it.value::class.java
       val requestMethod = RequestMethodUtils.fromClassName(classForRoute.simpleName) ?: return@forEach
@@ -48,16 +57,17 @@ class RouteMapper(
       val urlPath = packagePathToUrlPath(classForRoute.canonicalName, classForRoute.simpleName)
       val routeOptions = RouteOptions(urlPath, requestMethod)
 
-      mapRoute(it.value, routeOptions)
+      if (mapRoute(it.value, routeOptions)) count++
     }
+    return count
   }
 
-  private fun mapRoute(routeInstance: Any, routeOptions: RouteOptions) {
+  private fun mapRoute(routeInstance: Any, routeOptions: RouteOptions): Boolean {
     val handlerClass = routeInstance::class
 
     val handlerFunction = handlerClass.java.declaredMethods.firstOrNull {
       it.name == "handler"
-    } ?: return
+    } ?: return false
 
     val requestMappingInfo = RequestMappingInfo
       .paths(routeOptions.path)
@@ -73,6 +83,7 @@ class RouteMapper(
       routeInstance,
       handlerFunction
     )
+    return true
   }
 
   private fun packagePathToUrlPath(path: String, className: String): String {

@@ -15,10 +15,17 @@ class RouteMapperProperties(
      *
      */
     @NestedConfigurationProperty
-    val health: HealthEndpointProperties = HealthEndpointProperties()
+    val health: HealthEndpointProperties = HealthEndpointProperties(),
+
+    @NestedConfigurationProperty
+    val logging: LoggingProperties = LoggingProperties()
 )
 
 class HealthEndpointProperties(
     val endpoint: String = "healthk",
     val enabled: Boolean = true
+)
+
+class LoggingProperties(
+    val level: String = "standard"
 )
