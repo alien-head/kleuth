@@ -1,2 +1,2 @@
 # kleuth
-kotlin + sleuth = kleuth. A framework for generating spring rest apis through the directory structure.
+kotlin + sleuth = kleuth. A framework for generating Spring REST API routes through a directory structure.

@@ -19,19 +19,21 @@ class RouteMapper(
   private val context: ApplicationContext,
   private var properties: RouteMapperProperties = RouteMapperProperties()
 ) {
+  private var routesReady = false
 
   @EventListener(ApplicationReadyEvent::class)
   fun mapRoutes() {
     // Ensure the user has set the path to package property
     if (properties.pathToPackage.isEmpty()) return
 
-    val routes = getRoutes()
-
-    mapRoutes(routes)
-
     if (properties.health.enabled) {
       addHealthEndpoint()
     }
+
+    val routes = getRoutes()
+
+    mapRoutes(routes)
+    routesReady = true
   }
 
   private fun getRoutes(): Map<String, Any> {
@@ -100,5 +102,6 @@ class RouteMapper(
   }
 
   // Default health endpoint. This is configured last to ensure all routes have been mapped.
-  fun healthk(): ResponseEntity<Unit> = ResponseEntity(HttpStatus.OK)
+  fun healthk(): ResponseEntity<Unit> =
+    if (routesReady) ResponseEntity(HttpStatus.OK) else ResponseEntity(HttpStatus.SERVICE_UNAVAILABLE)
 }
