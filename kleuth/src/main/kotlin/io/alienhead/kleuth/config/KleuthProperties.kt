@@ -4,9 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 
-@ConfigurationProperties(prefix = "route.mapper")
+@ConfigurationProperties(prefix = "kleuth.core")
 @ConstructorBinding
-class RouteMapperProperties(
+class KleuthProperties(
     /**
      *
      */
