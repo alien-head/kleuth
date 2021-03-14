@@ -1,7 +1,6 @@
 package io.alienhead.kleuth.api.test
 
 import io.kotest.core.listeners.TestListener
-import io.kotest.core.spec.Spec
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.spring.SpringListener
 import org.hamcrest.CoreMatchers.`is`
@@ -30,8 +29,10 @@ class GetTestRoute(mvc: MockMvc) : DescribeSpec() {
 
     describe("given route and handler") {
       it("should map request to handler") {
-        mvc.perform(get("/test")
-          .contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(
+          get("/test")
+            .contentType(MediaType.APPLICATION_JSON)
+        )
           .andExpect(status().isOk)
           .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
           .andExpect(jsonPath("$.member", `is`("test")))

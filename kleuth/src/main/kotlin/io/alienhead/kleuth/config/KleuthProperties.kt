@@ -7,25 +7,25 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 @ConfigurationProperties(prefix = "kleuth.core")
 @ConstructorBinding
 class KleuthProperties(
-    /**
-     *
-     */
-    val pathToPackage: String = "",
-    /**
-     *
-     */
-    @NestedConfigurationProperty
-    val health: HealthEndpointProperties = HealthEndpointProperties(),
+  /**
+   *
+   */
+  val pathToPackage: String = "",
+  /**
+   *
+   */
+  @NestedConfigurationProperty
+  val health: HealthEndpointProperties = HealthEndpointProperties(),
 
-    @NestedConfigurationProperty
-    val logging: LoggingProperties = LoggingProperties()
+  @NestedConfigurationProperty
+  val logging: LoggingProperties = LoggingProperties()
 )
 
 class HealthEndpointProperties(
-    val endpoint: String = "healthk",
-    val enabled: Boolean = true
+  val endpoint: String = "healthk",
+  val enabled: Boolean = true
 )
 
 class LoggingProperties(
-    val level: String = "standard"
+  val level: String = "standard"
 )

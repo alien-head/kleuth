@@ -14,11 +14,11 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Configuration
 @EnableConfigurationProperties(value = [KleuthProperties::class])
 class KleuthConfiguration(
-    @Autowired private val handlerMapping: RequestMappingHandlerMapping,
-    @Autowired private val context: ApplicationContext,
-    @Autowired private val properties: KleuthProperties
+  @Autowired private val handlerMapping: RequestMappingHandlerMapping,
+  @Autowired private val context: ApplicationContext,
+  @Autowired private val properties: KleuthProperties
 ) {
 
-    @Bean
-    fun routeMapper(): RouteMapper = RouteMapper(handlerMapping, context, properties)
+  @Bean
+  fun routeMapper(): RouteMapper = RouteMapper(handlerMapping, context, properties)
 }
