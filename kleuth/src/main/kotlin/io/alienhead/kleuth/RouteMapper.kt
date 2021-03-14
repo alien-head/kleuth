@@ -2,7 +2,7 @@ package io.alienhead.kleuth
 
 import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.RouteController
-import io.alienhead.kleuth.config.RouteMapperProperties
+import io.alienhead.kleuth.config.KleuthProperties
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ApplicationContext
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 class RouteMapper(
   private val handlerMapping: RequestMappingHandlerMapping,
   private val context: ApplicationContext,
-  private var properties: RouteMapperProperties = RouteMapperProperties()
+  private var properties: KleuthProperties = KleuthProperties()
 ) {
   private val logger = LoggerFactory.getLogger(RouteMapper::class.java)
 

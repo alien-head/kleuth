@@ -1,1 +1,3 @@
-rootProject.name = "kleuth"
+rootProject.name = "kleuth-parent"
+include("kleuth")
+include("kleuth-functional-tests")
