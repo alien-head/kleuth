@@ -15,12 +15,12 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Configuration
 @EnableConfigurationProperties(value = [KleuthProperties::class])
 class KleuthAutoConfiguration(
-    @Autowired private val handlerMapping: RequestMappingHandlerMapping,
-    @Autowired private val context: ApplicationContext,
-    @Autowired private val properties: KleuthProperties
+  @Autowired private val handlerMapping: RequestMappingHandlerMapping,
+  @Autowired private val context: ApplicationContext,
+  @Autowired private val properties: KleuthProperties
 ) {
 
-    @Bean
-    @ConditionalOnMissingBean
-    fun routeMapper(): RouteMapper = RouteMapper(handlerMapping, context, properties)
+  @Bean
+  @ConditionalOnMissingBean
+  fun routeMapper(): RouteMapper = RouteMapper(handlerMapping, context, properties)
 }

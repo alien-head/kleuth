@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 
-
 class RouteMapper(
   private val handlerMapping: RequestMappingHandlerMapping,
   private val context: ApplicationContext,
