@@ -2,6 +2,9 @@ package io.alienhead.kleuth
 
 import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.RouteController
+import io.alienhead.kleuth.annotations.request.Get
+import io.alienhead.kleuth.annotations.request.Post
+import io.alienhead.kleuth.annotations.request.Put
 import io.alienhead.kleuth.config.KleuthProperties
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -10,9 +13,15 @@ import org.springframework.context.event.EventListener
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
+import java.lang.reflect.Method
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.functions
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.jvm.javaMethod
 
 class RouteMapper(
   private val handlerMapping: RequestMappingHandlerMapping,
@@ -35,62 +44,161 @@ class RouteMapper(
 
     val routes = getRoutes()
 
-    logger.info("Discovered ${routes.size} possible routes.")
+    val routeHandlers = routes.map {
+      RouteHandler(it.value, it.value::class.java.packageName.replace(".", "/"))
+    }.filter { it.path.contains(properties.pathToPackage) }
 
-    val mappedRoutes = mapRoutes(routes)
+    logger.info("Discovered ${routeHandlers.size} possible routes.")
+
+    // Routes with an overridden path must be handled differently
+    // TODO map overridden routes
+    val overrideRoutes = routeHandlers.filter {
+      !(
+        it.handlerInstance::class.findAnnotation<Route>()?.path.isNullOrEmpty() ||
+          it.handlerInstance::class.findAnnotation<RouteController>()?.path.isNullOrEmpty()
+        )
+    }
+
+    val normalRoutes = routeHandlers - overrideRoutes
+
+    val sortedRoutes = normalRoutes.sortRoutes()
+    sortedRoutes.mapRoutes(properties.pathToPackage)
     routesReady = true
 
-    logger.info("$mappedRoutes routes have been mapped.")
+    // logger.info("$mappedRoutes routes have been mapped.")
   }
 
   private fun getRoutes(): Map<String, Any> {
     return context.getBeansWithAnnotation(Route::class.java) + context.getBeansWithAnnotation(RouteController::class.java)
   }
 
-  private fun mapRoutes(routes: Map<String, Any>): Int {
-    var count = 0
-    routes.forEach {
-      val classForRoute = it.value::class.java
-      val requestMethod = RequestMethodUtils.fromClassName(classForRoute.simpleName) ?: return@forEach
+  private fun List<RouteHandler>.mapRoutes(rootToBasePath: String) {
 
-      val urlPath = packagePathToUrlPath(classForRoute.canonicalName, classForRoute.simpleName)
-      val routeOptions = RouteOptions(urlPath, requestMethod)
+    // A "cache" of already added paths. Needed to determine the placement of path variables
+    val paths = mutableListOf<PathInfo>()
 
-      if (mapRoute(it.value, routeOptions)) count++
+    // For all route handlers
+    this.forEach {
+      val routeClazz = it.handlerInstance::class
+      // We only need the first one because they all must match
+      val firstHandlerFunction = routeClazz.functions.firstOrNull { function ->
+        function.name == "handler" ||
+          (
+            function.hasAnnotation<Get>() ||
+              function.hasAnnotation<Post>() ||
+              function.hasAnnotation<Put>()
+            )
+      }
+
+      if (firstHandlerFunction != null) {
+        /*
+          Get all the names of path variables in the route handler.
+          Spring allows the user to specify a name or value instead of the function name for mapping purposes
+          so we have to check if those are set
+         */
+        val routePathVariables: List<String> = firstHandlerFunction.parameters.mapNotNull { parameter ->
+          parameter.findAnnotation<PathVariable>()?.let { pathVariable ->
+            when {
+              pathVariable.name.isNotEmpty() -> pathVariable.name
+              pathVariable.value.isNotEmpty() -> pathVariable.value
+              else -> parameter.name
+            }
+          }
+        }
+
+        /*
+          Check if there is a path already for the original path (folder path)
+          that also includes the same path variables
+         */
+        val matchingPathInfo = paths.firstOrNull { pathInfo ->
+          it.path.contains(pathInfo.originalPath) && routePathVariables.containsAll(pathInfo.pathVariables)
+        }
+
+        if (matchingPathInfo != null) {
+          it.path = it.path.replace(matchingPathInfo.originalPath, matchingPathInfo.newPath)
+          // It's possible the user has additional path variables than the matching cached path
+          val missingPathVariables = routePathVariables - matchingPathInfo.pathVariables
+
+          if (missingPathVariables.isNotEmpty()) {
+            var pathToAppend = ""
+
+            // If there are any path variables not found in the matched info,
+            // then they must be appended to the path
+            missingPathVariables.forEach { pathVariable ->
+              pathToAppend += "/{$pathVariable}"
+            }
+
+            it.path += pathToAppend
+
+            // This path must be cached since it has additional path variables
+            paths.add(PathInfo(matchingPathInfo.originalPath, it.path, routePathVariables))
+          } else {
+            // This route's path and path variables are the same as another so we do not cache again.
+            it.path = matchingPathInfo.newPath
+          }
+        } else {
+          // We did not find an existing path, so this one is new and must be cached.
+          var pathToAppend = ""
+
+          routePathVariables.forEach { pathVariable ->
+            pathToAppend += "/{$pathVariable}"
+          }
+          val newPath = it.path + pathToAppend
+
+          // if no matching path then this is a new path
+          paths.add(PathInfo(it.path, newPath, routePathVariables))
+
+          it.path = newPath
+        }
+
+        it.path = it.path
+          .replace(rootToBasePath, "")
+
+        processRouteHandler(it)
+      }
     }
-    return count
   }
 
-  private fun mapRoute(routeInstance: Any, routeOptions: RouteOptions): Boolean {
-    val handlerClass = routeInstance::class
+  private fun processRouteHandler(routeHandler: RouteHandler) {
+    // get all route handler functions
+    val requestMethodHandlers = routeHandler.handlerInstance::class.functions.filter {
+      it.name == "handler" ||
+        (
+          it.hasAnnotation<Get>() ||
+            it.hasAnnotation<Post>() ||
+            it.hasAnnotation<Put>()
+          )
+    }
 
-    val handlerFunction = handlerClass.java.declaredMethods.firstOrNull {
-      it.name == "handler"
-    } ?: return false
+    requestMethodHandlers.forEach {
+      val requestMethod = if (it.name == "handler") {
+        ParsingUtils.fromClassName(routeHandler.handlerInstance::class.simpleName!!)
+      } else {
+        ParsingUtils.findRequestMethodAnnotation(it.annotations)
+      }
 
+      val routeOptions = RouteOptions(routeHandler.path, requestMethod!!)
+      mapRoute(routeHandler.handlerInstance, it.javaMethod!!, routeOptions)
+    }
+  }
+
+  private fun mapRoute(routeHandlerInstance: Any, routeHandlerFunction: Method, routeOptions: RouteOptions) {
     val requestMappingInfo = RequestMappingInfo
       .paths(routeOptions.path)
       .methods(routeOptions.method)
+      // TODO allow the user to override this
       .produces(MediaType.APPLICATION_JSON_VALUE)
 
+    // TODO allow the user to override this
     if (routeOptions.method in listOf(RequestMethod.POST, RequestMethod.PUT)) {
       requestMappingInfo.consumes(MediaType.APPLICATION_JSON_VALUE)
     }
 
     handlerMapping.registerMapping(
       requestMappingInfo.build(),
-      routeInstance,
-      handlerFunction
+      routeHandlerInstance,
+      routeHandlerFunction
     )
-    return true
-  }
-
-  private fun packagePathToUrlPath(path: String, className: String): String {
-    return path
-      .replace(".$className", "")
-      .replace(properties.pathToPackage, "")
-      .replace(".", "/")
-      .replace("_", "-")
   }
 
   private fun addHealthEndpoint() {
