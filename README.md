@@ -2,9 +2,7 @@
 
 [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 
-kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight framework for generating Spring REST API routes through a directory structure. 
-
-Many developers using Spring try to use as few controllers as possible: shoving functions for multiple request methods and branching routes into a single file. This obfuscates the structure of the REST API and requires someone to dig through the code to figure out what is going on. Kleuth helps ensure the organization of the source code describes the layout of the REST API, thus enforcing REST API conventions while also removing a good chunk of Spring boilerplate and preventing controllers from ballooning in scope. This makes the code concise and clear for anyone to read.
+kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight framework for generating Spring REST API routes through a directory structure.
 
 ## Features
 
