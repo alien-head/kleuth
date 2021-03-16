@@ -45,7 +45,7 @@ class RouteMapper(
     val routes = getRoutes()
 
     val routeHandlers = routes.map {
-      RouteHandler(it.value, it.value::class.java.packageName.replace(".", "/"))
+      RouteHandler(it.value, it.value::class.qualifiedName!!.replace(".${it.value::class.simpleName!!}", "").replace(".", "/"))
     }.filter { it.path.contains(properties.pathToPackage) }
 
     logger.info("Discovered ${routeHandlers.size} possible routes.")
