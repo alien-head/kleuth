@@ -11,27 +11,14 @@ class ParsingUtils {
     fun fromClassName(name: String): RequestMethod? {
       val methods = RequestMethod.values()
 
-      methods.forEach {
-        val method = it.name.toLowerCase()
+      return methods.firstOrNull {
+        val method = it.name.toLowerCase().capitalize()
 
-        var index = 0
-        var indexOf = name.toLowerCase().indexOf(method, index)
-
-        while (indexOf < name.length && indexOf > -1) {
-          val methodLength = indexOf + method.length
-
-          if (name.length == methodLength || (indexOf == 0 && name[methodLength].isUpperCase())) {
-            return it
-          } else {
-            index = indexOf + method.length
-            indexOf = name.toLowerCase().indexOf(method, index)
-          }
-        }
+        name.startsWith(method) || name.endsWith(method)
       }
-      return null
     }
 
-    fun fromAnnotation(annotation: Annotation): RequestMethod? =
+    private fun fromAnnotation(annotation: Annotation): RequestMethod? =
       when (annotation) {
         is Get -> RequestMethod.GET
         is Post -> RequestMethod.POST
@@ -53,4 +40,5 @@ fun String.removeRootPathFromRoutePath(rootPath: String): String {
   return this.replace(rootPath, "")
 }
 
-fun String.removeClassNameFromFullName(className: String) = this.replace(className, "")
+fun String.removeClassName(className: String) = this.replace(className, "")
+fun String.replacePackageSeparator() = this.replace(".", "/")

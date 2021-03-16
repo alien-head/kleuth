@@ -7,9 +7,7 @@ import io.alienhead.kleuth.annotations.request.Post
 import io.alienhead.kleuth.annotations.request.Put
 import io.alienhead.kleuth.config.KleuthProperties
 import org.slf4j.LoggerFactory
-import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ApplicationContext
-import org.springframework.context.event.EventListener
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.lang.reflect.Method
+import javax.annotation.PostConstruct
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
@@ -32,7 +31,8 @@ class RouteMapper(
 
   private var routesReady = false
 
-  @EventListener(ApplicationReadyEvent::class)
+  // @EventListener(ApplicationReadyEvent::class)
+  @PostConstruct
   fun mapRoutes() {
     // Ensure the user has set the path to package property
     if (properties.pathToPackage.isEmpty()) return
@@ -45,7 +45,12 @@ class RouteMapper(
     val routes = getRoutes()
 
     val routeHandlers = routes.map {
-      RouteHandler(it.value, it.value::class.qualifiedName!!.replace(".${it.value::class.simpleName!!}", "").replace(".", "/"))
+      RouteHandler(
+        it.value,
+        it.value::class.qualifiedName!!
+          .removeClassName(".${it.value::class.simpleName!!}")
+          .replacePackageSeparator()
+      )
     }.filter { it.path.contains(properties.pathToPackage) }
 
     logger.info("Discovered ${routeHandlers.size} possible routes.")
