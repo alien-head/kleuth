@@ -9,4 +9,4 @@ import org.springframework.web.bind.annotation.RestController
 @Target(AnnotationTarget.CLASS)
 @Retention
 @RestController
-annotation class RouteController
+annotation class RouteController(val path: String = "")
