@@ -20,8 +20,11 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-configuration-processor")
   implementation("org.springframework.boot:spring-boot-autoconfigure-processor")
   implementation("org.springframework.boot:spring-boot-starter-web")
+
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+  implementation("net.pearx.kasechange:kasechange:1.3.0")
 
   testImplementation("io.kotest:kotest-runner-junit5:4.3.2")
 

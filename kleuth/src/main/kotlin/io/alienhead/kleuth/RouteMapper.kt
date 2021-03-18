@@ -6,6 +6,7 @@ import io.alienhead.kleuth.annotations.request.Get
 import io.alienhead.kleuth.annotations.request.Post
 import io.alienhead.kleuth.annotations.request.Put
 import io.alienhead.kleuth.config.KleuthProperties
+import net.pearx.kasechange.toKebabCase
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.http.HttpStatus
@@ -84,9 +85,9 @@ class RouteMapper(
 
     // For all route handlers
     this.forEach {
-      val routeClazz = it.handlerInstance::class
+      val routeHandlerClass = it.handlerInstance::class
       // We only need the first one because they all must match
-      val firstHandlerFunction = routeClazz.functions.firstOrNull { function ->
+      val firstHandlerFunction = routeHandlerClass.functions.firstOrNull { function ->
         function.name == "handler" ||
           (
             function.hasAnnotation<Get>() ||
@@ -116,8 +117,10 @@ class RouteMapper(
           that also includes the same path variables
          */
         val matchingPathInfo = paths.firstOrNull { pathInfo ->
-          it.path.contains(pathInfo.originalPath) && routePathVariables.containsAll(pathInfo.pathVariables)
+          it.path.toKebabCase().contains(pathInfo.originalPath.toKebabCase()) && routePathVariables.containsAll(pathInfo.pathVariables)
         }
+
+        it.path = it.path.toKebabCase()
 
         if (matchingPathInfo != null) {
           it.path = it.path.replace(matchingPathInfo.originalPath, matchingPathInfo.newPath)
@@ -156,8 +159,7 @@ class RouteMapper(
           it.path = newPath
         }
 
-        it.path = it.path
-          .replace(rootToBasePath, "")
+        it.path = it.path.removeRootPathFromPath(rootToBasePath)
 
         processRouteHandler(it)
       }

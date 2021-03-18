@@ -1,4 +1,4 @@
-package io.alienhead.kleuth.pathVariables.api.test
+package io.alienhead.kleuth.rotueWithHyphen.api.testHyphen
 
 import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.style.DescribeSpec
@@ -15,18 +15,18 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
-@ActiveProfiles("pathVariables")
+@ActiveProfiles("camelCase")
 @AutoConfigureMockMvc
-class PathVariablesTests(mvc: MockMvc) : DescribeSpec() {
+class PackageWithHyphensTests(mvc: MockMvc) : DescribeSpec() {
   override fun listeners(): List<TestListener> {
     return listOf(SpringListener)
   }
 
   init {
-    describe("given route and handler") {
-      it("should map request to handler") {
+    describe("given package has camel case") {
+      it("should map request to handler and change camel case to kebab case") {
         mvc.perform(
-          get("/test/{testId}", "1234")
+          get("/camel-case/{testId}", "1234")
             .contentType(MediaType.APPLICATION_JSON)
         )
           .andExpect(status().isOk)
@@ -34,19 +34,9 @@ class PathVariablesTests(mvc: MockMvc) : DescribeSpec() {
           .andExpect(jsonPath("$.member", `is`("testId: 1234")))
       }
 
-      it("should map request to handler with two path variables") {
+      it("should map child routes with camel case") {
         mvc.perform(
-          get("/test/{testId}/child/{childId}", "1234", "4321")
-            .contentType(MediaType.APPLICATION_JSON)
-        )
-          .andExpect(status().isOk)
-          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$.member", `is`("testId: 1234, childId: 4321")))
-      }
-
-      it("should map request to other child path with two path variables") {
-        mvc.perform(
-          get("/test/{testId}/other-child/{childId}", "1234", "4321")
+          get("/camel-case/{testId}/child-with-camel-case/{childId}", "1234", "4321")
             .contentType(MediaType.APPLICATION_JSON)
         )
           .andExpect(status().isOk)

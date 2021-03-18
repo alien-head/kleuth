@@ -3,6 +3,7 @@ package io.alienhead.kleuth
 import io.alienhead.kleuth.annotations.request.Get
 import io.alienhead.kleuth.annotations.request.Post
 import io.alienhead.kleuth.annotations.request.Put
+import net.pearx.kasechange.toKebabCase
 import org.springframework.web.bind.annotation.RequestMethod
 
 class ParsingUtils {
@@ -36,9 +37,6 @@ class ParsingUtils {
   }
 }
 
-fun String.removeRootPathFromRoutePath(rootPath: String): String {
-  return this.replace(rootPath, "")
-}
-
+fun String.removeRootPathFromPath(rootPath: String) = this.replace(rootPath.toKebabCase(), "")
 fun String.removeClassName(className: String) = this.replace(className, "")
 fun String.replacePackageSeparator() = this.replace(".", "/")
