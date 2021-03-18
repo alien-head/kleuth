@@ -119,6 +119,28 @@ class EverythingTests(mvc: MockMvc) : DescribeSpec() {
             .andExpect(jsonPath("$.member", `is`("test")))
         }
       }
+
+      describe("/test/override") {
+        it("should map get request to handler when path is overridden in @RouteController") {
+          mvc.perform(
+            get("/overridden-path/{testId}", "1234")
+              .contentType(MediaType.APPLICATION_JSON)
+          )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.member", `is`("testId: 1234")))
+        }
+
+        it("should map get request to handler when path is overridden in @Route") {
+          mvc.perform(
+            get("/overridden-path/{testId}/other", "1234")
+              .contentType(MediaType.APPLICATION_JSON)
+          )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.member", `is`("testId: 1234")))
+        }
+      }
     }
   }
 }

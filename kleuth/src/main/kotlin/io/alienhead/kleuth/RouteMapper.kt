@@ -56,18 +56,18 @@ class RouteMapper(
     logger.info("Discovered ${routeHandlers.size} possible routes.")
 
     // Routes with an overridden path must be handled differently
-    // TODO map overridden routes
     val overrideRoutes = routeHandlers.filter {
-      !(
-        it.handlerInstance::class.findAnnotation<Route>()?.path.isNullOrEmpty() ||
-          it.handlerInstance::class.findAnnotation<RouteController>()?.path.isNullOrEmpty()
-        )
+      !(it.handlerInstance::class.findAnnotation<Route>()?.path.isNullOrEmpty()) ||
+        !(it.handlerInstance::class.findAnnotation<RouteController>()?.path.isNullOrEmpty())
     }
+
+    logger.info("Found ${overrideRoutes.size} routes with overridden paths.")
+
+    overrideRoutes.forEach { processRouteHandlerWithOverride(it) }
 
     val normalRoutes = routeHandlers - overrideRoutes
 
-    val sortedRoutes = normalRoutes.sortRoutes()
-    sortedRoutes.mapRoutes(properties.pathToPackage)
+    normalRoutes.sortRoutes().mapRoutes(properties.pathToPackage)
     routesReady = true
 
     // logger.info("$mappedRoutes routes have been mapped.")
@@ -184,6 +184,35 @@ class RouteMapper(
 
       val routeOptions = RouteOptions(routeHandler.path, requestMethod!!)
       mapRoute(routeHandler.handlerInstance, it.javaMethod!!, routeOptions)
+    }
+  }
+
+  private fun processRouteHandlerWithOverride(routeHandler: RouteHandler) {
+    // get all route handler functions
+    val requestMethodHandlers = routeHandler.handlerInstance::class.functions.filter {
+      it.name == "handler" ||
+        (
+          it.hasAnnotation<Get>() ||
+            it.hasAnnotation<Post>() ||
+            it.hasAnnotation<Put>()
+          )
+    }
+
+    requestMethodHandlers.forEach {
+      val requestMethod = if (it.name == "handler") {
+        ParsingUtils.fromClassName(routeHandler.handlerInstance::class.simpleName!!)
+      } else {
+        ParsingUtils.findRequestMethodAnnotation(it.annotations)
+      }
+
+      val overridePath = routeHandler.handlerInstance::class.findAnnotation<Route>()?.path
+        ?: routeHandler.handlerInstance::class.findAnnotation<RouteController>()?.path
+
+      if (overridePath != null) {
+        val routeOptions = RouteOptions(overridePath, requestMethod!!)
+        mapRoute(routeHandler.handlerInstance, it.javaMethod!!, routeOptions)
+      }
+      // TODO else Log bad route
     }
   }
 
