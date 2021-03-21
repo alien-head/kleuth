@@ -2,6 +2,7 @@ package io.alienhead.kleuth
 
 import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.RouteController
+import io.alienhead.kleuth.annotations.request.Delete
 import io.alienhead.kleuth.annotations.request.Get
 import io.alienhead.kleuth.annotations.request.Post
 import io.alienhead.kleuth.annotations.request.Put
@@ -90,7 +91,8 @@ class RouteMapper(
         (
           it.hasAnnotation<Get>() ||
             it.hasAnnotation<Post>() ||
-            it.hasAnnotation<Put>()
+            it.hasAnnotation<Put>() ||
+            it.hasAnnotation<Delete>()
           )
     }
 
@@ -111,6 +113,8 @@ class RouteMapper(
       } ?: it.findAnnotation<Post>()?.let { annotation ->
         Pair(annotation.produces, annotation.consumes)
       } ?: it.findAnnotation<Put>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      } ?: it.findAnnotation<Delete>()?.let { annotation ->
         Pair(annotation.produces, annotation.consumes)
       }
 
@@ -198,7 +202,8 @@ class RouteMapper(
         (
           it.hasAnnotation<Get>() ||
             it.hasAnnotation<Post>() ||
-            it.hasAnnotation<Put>()
+            it.hasAnnotation<Put>() ||
+            it.hasAnnotation<Delete>()
           )
     }
 
@@ -217,6 +222,8 @@ class RouteMapper(
       } ?: it.findAnnotation<Post>()?.let { annotation ->
         Pair(annotation.produces, annotation.consumes)
       } ?: it.findAnnotation<Put>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      } ?: it.findAnnotation<Delete>()?.let { annotation ->
         Pair(annotation.produces, annotation.consumes)
       }
 
