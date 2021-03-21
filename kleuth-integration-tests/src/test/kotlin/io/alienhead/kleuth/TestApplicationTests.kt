@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles("local")
 class TestApplicationTests : DescribeSpec() {
   override fun listeners(): List<TestListener> {
     return listOf(SpringListener)
