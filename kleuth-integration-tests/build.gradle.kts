@@ -15,7 +15,10 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+  implementation("org.apache.commons:commons-csv:1.8")
 
   testImplementation("io.kotest:kotest-runner-junit5:4.3.2")
   testImplementation("io.kotest:kotest-extensions-spring:4.3.2")
@@ -25,7 +28,7 @@ dependencies {
 }
 
 group = "io.alienhead"
-version = "0.2.1-SNAPSHOT"
+version = "0.3.0-SNAPSHOT"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 

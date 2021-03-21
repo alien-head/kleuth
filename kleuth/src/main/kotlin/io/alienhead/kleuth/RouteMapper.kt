@@ -106,7 +106,20 @@ class RouteMapper(
         ParsingUtils.findRequestMethodAnnotation(it.annotations)
       }
 
-      val routeOptions = RouteOptions(path, requestMethod!!)
+      val producesConsumes = it.findAnnotation<Get>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      } ?: it.findAnnotation<Post>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      } ?: it.findAnnotation<Put>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      }
+
+      val routeOptions = RouteOptions(
+        path,
+        requestMethod!!,
+        producesConsumes?.first ?: MediaType.APPLICATION_JSON_VALUE,
+        producesConsumes?.second ?: ""
+      )
       mapRoute(routeHandler.handlerInstance, it.javaMethod!!, routeOptions)
     }
   }
@@ -199,25 +212,39 @@ class RouteMapper(
       val overridePath = routeHandler.handlerInstance::class.findAnnotation<Route>()?.path
         ?: routeHandler.handlerInstance::class.findAnnotation<RouteController>()?.path
 
+      val producesConsumes = it.findAnnotation<Get>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      } ?: it.findAnnotation<Post>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      } ?: it.findAnnotation<Put>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      }
+
       if (overridePath != null) {
-        val routeOptions = RouteOptions(overridePath, requestMethod!!)
+        val routeOptions = RouteOptions(
+          overridePath,
+          requestMethod!!,
+          producesConsumes?.first ?: MediaType.APPLICATION_JSON_VALUE,
+          producesConsumes?.second ?: ""
+        )
         mapRoute(routeHandler.handlerInstance, it.javaMethod!!, routeOptions)
       }
       // TODO else Log bad route
     }
   }
 
-  private fun mapRoute(routeHandlerInstance: Any, routeHandlerFunction: Method, routeOptions: RouteOptions) {
+  private fun mapRoute(
+    routeHandlerInstance: Any,
+    routeHandlerFunction: Method,
+    routeOptions: RouteOptions
+  ) {
     val requestMappingInfo = RequestMappingInfo
       .paths(routeOptions.path)
       .methods(routeOptions.method)
-      // TODO allow the user to override this
-      .produces(MediaType.APPLICATION_JSON_VALUE)
 
-    // TODO allow the user to override this
-    if (routeOptions.method in listOf(RequestMethod.POST, RequestMethod.PUT)) {
-      requestMappingInfo.consumes(MediaType.APPLICATION_JSON_VALUE)
-    }
+    requestMappingInfo.produces(routeOptions.produces)
+
+    if (routeOptions.consumes.isNotEmpty()) requestMappingInfo.consumes(routeOptions.consumes)
 
     handlerMapping.registerMapping(
       requestMappingInfo.build(),
