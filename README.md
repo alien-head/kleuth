@@ -1,5 +1,6 @@
 # Kleuth
 
+[![Build](https://github.com/alien-head/kleuth/actions/workflows/pr-verify.yml/badge.svg?event=push)](https://github.com/alien-head/kleuth/actions/workflows/pr-verify.yml)
 [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 
 kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight framework for generating Spring REST API routes through a directory structure.
