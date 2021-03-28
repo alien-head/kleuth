@@ -1,6 +1,5 @@
 package io.alienhead.kleuth
 
-import io.alienhead.kleuth.ParsingUtils.Companion.ofRequestMethod
 import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.RouteController
 import io.alienhead.kleuth.annotations.request.Delete
@@ -108,7 +107,7 @@ class RouteMapper(
           it.name.ofRequestMethod(true)
         }
         else -> {
-          ParsingUtils.findRequestMethodAnnotation(it.annotations)
+          it.annotations.findRequestMethodAnnotation()
         }
       }
 
@@ -223,7 +222,7 @@ class RouteMapper(
           it.name.ofRequestMethod(true)
         }
         else -> {
-          ParsingUtils.findRequestMethodAnnotation(it.annotations)
+          it.annotations.findRequestMethodAnnotation()
         }
       }
 
