@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -151,6 +152,18 @@ class EverythingTests(mvc: MockMvc) : DescribeSpec() {
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(content().string("1234"))
+        }
+      }
+
+      describe("/delete") {
+        it("should map delete request to named request") {
+          mvc.perform(
+            delete("/delete/{resourceId}", "1234")
+              .contentType(MediaType.APPLICATION_JSON)
+          )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$", `is`("Deleted 1234")))
         }
       }
     }
