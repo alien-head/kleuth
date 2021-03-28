@@ -6,6 +6,15 @@ import io.alienhead.kleuth.annotations.request.Post
 import io.alienhead.kleuth.annotations.request.Put
 import net.pearx.kasechange.toKebabCase
 import org.springframework.web.bind.annotation.RequestMethod
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+
+internal fun KFunction<*>.hasRequestAnnotation() =
+  this.hasAnnotation<Get>() ||
+    this.hasAnnotation<Post>() ||
+    this.hasAnnotation<Put>() ||
+    this.hasAnnotation<Delete>()
 
 internal fun Annotation?.fromAnnotation(): RequestMethod? =
   when (this) {
@@ -32,6 +41,25 @@ internal fun String.ofRequestMethod(strictEquality: Boolean = false): RequestMet
 
     (strictEquality && this == method.toLowerCase()) || (this.startsWith(method) || this.endsWith(method))
   }
+}
+
+internal fun KFunction<*>.getProducesConsumes() =
+  this.findAnnotation<Get>()?.let { annotation ->
+    Pair(annotation.produces, annotation.consumes)
+  } ?: this.findAnnotation<Post>()?.let { annotation ->
+    Pair(annotation.produces, annotation.consumes)
+  } ?: this.findAnnotation<Put>()?.let { annotation ->
+    Pair(annotation.produces, annotation.consumes)
+  } ?: this.findAnnotation<Delete>()?.let { annotation ->
+    Pair(annotation.produces, annotation.consumes)
+  }
+
+internal fun List<String>.appendToPath(): String {
+  var path = ""
+  this.forEach { pathVariable ->
+    path += "/{$pathVariable}"
+  }
+  return path
 }
 
 internal fun String.toPath(className: String) = this.removeClassName(className).replacePackageSeparator()
