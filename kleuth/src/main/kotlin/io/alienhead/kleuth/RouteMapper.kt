@@ -2,6 +2,7 @@ package io.alienhead.kleuth
 
 import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.RouteController
+import io.alienhead.kleuth.annotations.request.Delete
 import io.alienhead.kleuth.annotations.request.Get
 import io.alienhead.kleuth.annotations.request.Post
 import io.alienhead.kleuth.annotations.request.Put
@@ -32,10 +33,8 @@ class RouteMapper(
   private val logger = LoggerFactory.getLogger(RouteMapper::class.java)
 
   private val pathCache = mutableListOf<PathInfo>()
-
   private var routesReady = false
 
-  // @EventListener(ApplicationReadyEvent::class)
   @PostConstruct
   fun mapRoutes() {
     // Ensure the user has set the path to package property
@@ -51,9 +50,7 @@ class RouteMapper(
     val routeHandlers = routes.map {
       RouteHandler(
         it.value,
-        it.value::class.qualifiedName!!
-          .removeClassName(".${it.value::class.simpleName!!}")
-          .replacePackageSeparator()
+        it.value::class.qualifiedName!!.toPath(it.value::class.simpleName!!)
       )
     }.filter { it.path.contains(properties.pathToPackage) }
 
@@ -87,10 +84,12 @@ class RouteMapper(
     // get all route handler functions
     val requestMethodHandlers = routeHandler.handlerInstance::class.functions.filter {
       it.name == "handler" ||
+        it.name.ofRequestMethod(true) != null ||
         (
           it.hasAnnotation<Get>() ||
             it.hasAnnotation<Post>() ||
-            it.hasAnnotation<Put>()
+            it.hasAnnotation<Put>() ||
+            it.hasAnnotation<Delete>()
           )
     }
 
@@ -100,10 +99,16 @@ class RouteMapper(
     val path = getOrCachePath(routeHandler.path, requestMethodHandlers.first())
 
     requestMethodHandlers.forEach {
-      val requestMethod = if (it.name == "handler") {
-        ParsingUtils.fromClassName(routeHandler.handlerInstance::class.simpleName!!)
-      } else {
-        ParsingUtils.findRequestMethodAnnotation(it.annotations)
+      val requestMethod = when {
+        it.name == "handler" -> {
+          routeHandler.handlerInstance::class.simpleName!!.ofRequestMethod()
+        }
+        it.name.ofRequestMethod(true) != null -> {
+          it.name.ofRequestMethod(true)
+        }
+        else -> {
+          it.annotations.findRequestMethodAnnotation()
+        }
       }
 
       val producesConsumes = it.findAnnotation<Get>()?.let { annotation ->
@@ -112,13 +117,18 @@ class RouteMapper(
         Pair(annotation.produces, annotation.consumes)
       } ?: it.findAnnotation<Put>()?.let { annotation ->
         Pair(annotation.produces, annotation.consumes)
+      } ?: it.findAnnotation<Delete>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
       }
+
+      val produces = producesConsumes?.first
+      val consumes = producesConsumes?.second
 
       val routeOptions = RouteOptions(
         path,
         requestMethod!!,
-        producesConsumes?.first ?: MediaType.APPLICATION_JSON_VALUE,
-        producesConsumes?.second ?: ""
+        produces ?: MediaType.APPLICATION_JSON_VALUE,
+        consumes ?: ""
       )
       mapRoute(routeHandler.handlerInstance, it.javaMethod!!, routeOptions)
     }
@@ -198,15 +208,22 @@ class RouteMapper(
         (
           it.hasAnnotation<Get>() ||
             it.hasAnnotation<Post>() ||
-            it.hasAnnotation<Put>()
+            it.hasAnnotation<Put>() ||
+            it.hasAnnotation<Delete>()
           )
     }
 
     requestMethodHandlers.forEach {
-      val requestMethod = if (it.name == "handler") {
-        ParsingUtils.fromClassName(routeHandler.handlerInstance::class.simpleName!!)
-      } else {
-        ParsingUtils.findRequestMethodAnnotation(it.annotations)
+      val requestMethod = when {
+        it.name == "handler" -> {
+          routeHandler.handlerInstance::class.simpleName!!.ofRequestMethod()
+        }
+        it.name.ofRequestMethod(true) != null -> {
+          it.name.ofRequestMethod(true)
+        }
+        else -> {
+          it.annotations.findRequestMethodAnnotation()
+        }
       }
 
       val overridePath = routeHandler.handlerInstance::class.findAnnotation<Route>()?.path
@@ -217,6 +234,8 @@ class RouteMapper(
       } ?: it.findAnnotation<Post>()?.let { annotation ->
         Pair(annotation.produces, annotation.consumes)
       } ?: it.findAnnotation<Put>()?.let { annotation ->
+        Pair(annotation.produces, annotation.consumes)
+      } ?: it.findAnnotation<Delete>()?.let { annotation ->
         Pair(annotation.produces, annotation.consumes)
       }
 
