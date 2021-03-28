@@ -34,7 +34,7 @@ dependencies {
 }
 
 group = "io.alienhead"
-version = "0.0.2-SNAPSHOT"
+version = "0.6.0-SNAPSHOT"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
