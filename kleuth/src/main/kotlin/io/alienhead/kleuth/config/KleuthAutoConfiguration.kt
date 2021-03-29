@@ -10,7 +10,13 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 
 /**
+ * Autoconfigures the Kleuth Route Mapper Bean
  *
+ * @param handlerMapping The Spring RequestMappingHandlerMapping service. Needed to map request handlers.
+ * @param context Spring's ApplicationContext. Needed to get Route and Route Controller Beans.
+ * @param properties Kleuth properties as set in the application.properties files.
+ *
+ * @see KleuthProperties
  */
 @Configuration
 @EnableConfigurationProperties(value = [KleuthProperties::class])

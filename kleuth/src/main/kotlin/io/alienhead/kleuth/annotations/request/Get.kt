@@ -2,9 +2,13 @@ package io.alienhead.kleuth.annotations.request
 
 import org.springframework.http.MediaType
 
-/*
-    Use this annotation along with a @RestController annotation (with unique name!! example: @RestController("my-route")
-    to use descriptive class names (get, post, put instead of GetMyRoute, PostMyRoute)
+/**
+ * Used to denote a function as a handler for this http request method in a Route or RouteController class
+ *
+ * @param produces Used to override the default produces value for the request mapping
+ * @param consumes Used to override the default consumes value for the request mapping
+ *
+ * @see RouteController
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention

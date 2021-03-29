@@ -16,6 +16,13 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.javaMethod
 
+/**
+ * This class is responsible for mapping Kleuth Route and RouteController classes
+ *
+ * @param handlerMapping the Spring RequestMappingHandlerMapping instance for creating request mappings
+ * @param context the Spring ApplicationContext is used for retrieving the beans of Kleuth Routes and RouteControllers
+ * @param properties the [KleuthProperties] properties needed to map routes.
+ */
 class RouteMapper(
   private val handlerMapping: RequestMappingHandlerMapping,
   private val context: ApplicationContext,
@@ -24,6 +31,9 @@ class RouteMapper(
   private val logger = LoggerFactory.getLogger(RouteMapper::class.java)
   private val pathCache = PathCache(properties.pathToRoot)
 
+  /**
+   * Uses the PostConstruct annotation to complete the mapping of Kleuth Routes and RouteControllers
+   */
   @PostConstruct
   internal fun mapRoutes() {
     // Ensure the user has set the path to root property
@@ -41,10 +51,18 @@ class RouteMapper(
     logger.info("Took ${timeSpent.toMillis()} ms to map $routeCount routes.")
   }
 
+  /**
+   * Gets a list of Kleuth Route or RouteController classes from the Spring ApplicationContext
+   */
   private fun getRoutes(): Map<String, Any> {
     return context.getBeansWithAnnotation(Route::class.java) + context.getBeansWithAnnotation(RouteController::class.java)
   }
 
+  /**
+   * Processes a list of Kleuth Routes and RouteControllers for request mappings
+   *
+   * @param routes a list of beans
+   */
   private fun processRoutes(routes: Map<String, Any>): Int {
     val routeHandlers = routes.toRouteHandlers(properties.pathToRoot)
 
@@ -59,12 +77,27 @@ class RouteMapper(
     return routeHandlers.size
   }
 
+  /**
+   * Gets all routes that have overridden paths
+   *
+   * @param routes a list of [RouteHandler] objects
+   *
+   * @see RouteHandler
+   */
   private fun getRoutesWithOverride(routes: List<RouteHandler>) =
     routes.filter {
       !(it.handlerInstance::class.findAnnotation<Route>()?.path.isNullOrEmpty()) ||
         !(it.handlerInstance::class.findAnnotation<RouteController>()?.path.isNullOrEmpty())
     }
 
+  /**
+   * Maps all Request Method handlers that have overridden routes
+   *
+   * @param routes a list of [RouteHandler] objects
+   *
+   * @return a list of routes that have not overridden the path variable.
+   * @see RouteHandler
+   */
   private fun processRouteHandlersWithOverride(routes: List<RouteHandler>): List<RouteHandler> {
     val overrideRoutes = getRoutesWithOverride(routes)
 
@@ -75,6 +108,14 @@ class RouteMapper(
     return routes - overrideRoutes
   }
 
+  /**
+   * Parses a [RouteHandler] instance for request method handler functions and maps those functions
+   *
+   * @param routeHandler a [RouteHandler] instance
+   * @param override tells whether the path has been overridden on the [Route] or [RouteController] annotation.
+   *
+   * @see [RouteHandler]
+   */
   private fun processRouteHandler(routeHandler: RouteHandler, override: Boolean = false) {
     // get all route handler functions
     val requestMethodHandlers = routeHandler.handlerInstance::class.functions.filter {
@@ -118,10 +159,24 @@ class RouteMapper(
     }
   }
 
+  /**
+   * Sorts and processes a list of [RouteHandler] instances
+   *
+   * @param routes a list of [RouteHandler] instances
+   */
   private fun processRouteHandlers(routes: List<RouteHandler>) {
     routes.sortRoutes().forEach { processRouteHandler(it) }
   }
 
+  /**
+   * Maps a request method function to a path
+   *
+   * @param routeHandlerInstance the [RouteHandler] instance
+   * @param routeHandlerFunction the function within a [RouteHandler]
+   * @param routeOptions the object that stores the context about the route
+   *
+   * @see RouteOptions
+   */
   private fun mapRoute(
     routeHandlerInstance: Any,
     routeHandlerFunction: Method,
