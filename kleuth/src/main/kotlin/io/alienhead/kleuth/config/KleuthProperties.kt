@@ -10,7 +10,7 @@ class KleuthProperties(
   /**
    *
    */
-  val pathToPackage: String = "",
+  val pathToRoot: String = "",
   /**
    *
    */
