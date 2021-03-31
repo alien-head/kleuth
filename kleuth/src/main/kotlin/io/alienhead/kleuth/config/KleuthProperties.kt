@@ -2,7 +2,6 @@ package io.alienhead.kleuth.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
-import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 /**
  * Configuration properties needed to operate Kleuth.
@@ -14,4 +13,4 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
  */
 @ConfigurationProperties(prefix = "kleuth.core")
 @ConstructorBinding
-class KleuthProperties(val pathToRoot: String = "", )
+class KleuthProperties(val pathToRoot: String = "")
