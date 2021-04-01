@@ -101,3 +101,15 @@ publishing {
     }
   }
 }
+
+signing {
+  setRequired({
+    gradle.taskGraph.hasTask("publish")
+  })
+
+  val signingKeyId: String? by project
+  val signingKey: String? by project
+  val signingPassword: String? by project
+  useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+  sign(publishing.publications["mavenJava"])
+}
