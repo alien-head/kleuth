@@ -9,9 +9,9 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
-// sort by path alphabetically and number of path variables.
-// get first function named "handler" or that has a request method annotation.
-// count how many path variables it has
+/**
+ * Sorts [RouteHandler] classes alphabetically by package path and number of path variables
+ */
 internal fun List<RouteHandler>.sortRoutes(): List<RouteHandler> {
   return this.sortedWith(
     compareBy(
@@ -34,6 +34,11 @@ internal fun List<RouteHandler>.sortRoutes(): List<RouteHandler> {
   )
 }
 
+/**
+ * Transforms a list of beans to route handler objects
+ *
+ * @param filterPath the package path to filter out potential beans
+ */
 internal fun Map<String, Any>.toRouteHandlers(filterPath: String) =
   this.map {
     RouteHandler(

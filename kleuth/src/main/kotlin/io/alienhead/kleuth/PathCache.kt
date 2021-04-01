@@ -5,9 +5,20 @@ import org.springframework.web.bind.annotation.PathVariable
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.findAnnotation
 
+/**
+ * A cache of [PathInfo] objects that store the context of a url path and path variables for mapping requests
+ *
+ * @param pathToRoot the url path to remove from the path
+ */
 class PathCache(private val pathToRoot: String) {
   private val pathCache = mutableListOf<PathInfo>()
 
+  /**
+   * Retrieves the matching path from the cache, if not found, cache the path.
+   *
+   * @param originalPath the original package path without path variables
+   * @param handlerFunction the handler function for a request method handler in a route class
+   */
   internal fun getOrCache(originalPath: String, handlerFunction: KFunction<*>): String {
     var setPath = originalPath
     /*
