@@ -1,6 +1,6 @@
 ---
-title: Developer Setup
-slug: /developer-setup
+title: Contributing
+slug: /contributing
 ---
 
 This page documents everything needed to contribute to Kleuth.

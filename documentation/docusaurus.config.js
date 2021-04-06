@@ -41,6 +41,14 @@ module.exports = {
               label: 'Getting Started',
               to: 'docs/',
             },
+            {
+              label: 'Framework',
+              to: 'docs/framework/structure',
+            },
+            {
+              label: 'Contributing',
+              to: 'docs/contributing',
+            },
           ],
         },
 //        {
