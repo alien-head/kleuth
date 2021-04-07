@@ -2,8 +2,8 @@
 module.exports = {
   title: '️Kleuth',
   tagline: 'Kotlin + sleuth🕵️‍♂️ . A lightweight, flexible framework for dynamically building Spring REST APIs.',
-  url: 'https://your-docusaurus-test-site.com',
-  baseUrl: '/',
+  url: 'https://github.com/alien-head',
+  baseUrl: '/klueth/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
