@@ -3,35 +3,80 @@
 [![Build](https://github.com/alien-head/kleuth/actions/workflows/pr-verify.yml/badge.svg?event=push)](https://github.com/alien-head/kleuth/actions/workflows/pr-verify.yml)
 [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 
-kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight framework for generating Spring REST API routes through a directory structure.
+kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight framework for generating Spring REST API routes dynamically.
 
-## Features
+___
 
-## Kleuth Conventions
+## How it works
+Kleuth uses project folders and naming standards to map functions to web requests.
 
-### Other allowed behaviors
+Example:
 
-Although it goes against the idea of one handler function per route handler class, handler classes can have any number of handler functions so long as every additional handler function is annotated with the appropriate `RequestMethod` (`Get`, `Post`, `Put`, etc.). 
+![Pizza Restauruant REST API](./documentation/assets/pizza_api_structure_only.png)
 
-> Tip! This is also useful for 1-to-1 route handlers if you want your handler function to have a unique name. The `RequestMethod` annotation supercedes the class name when defining a route.
+Classes annotated with `Route` or `RequestMethod` are then used by Kleuth to map the path set in the folder structure to functions.
 
-## Setup
+This is what the `rest/pizzas/GetPizzas.kt` class in the above example looks like:
 
-## Compatibility Notes
-Handler functions work exactly like Spring `@RequestMapping` functions. However,
-function-level Spring annotations do not work on handler functions (`@ResponseStatus`, `@PreAuthorize`). Luckily, Spring commonly provides multiple ways to get the same job done. 
-> Tip! Ant matchers can handle the same behavior of `@PreAuthorize`, for one example. If you are following the Kleuth conventions and your route handlers are 1-to-1 with route handler classes, then this is the correct way to handle preauthorization anyway.
+```kotlin
+@Route
+class GetPizzas(private val service: PizzaService) {
+    fun handler(): ResponseEntity<List<Pizza>> {
+        return ResponseEntity.ok(service.getAll())
+    }
+} 
+```
 
-Since handler classes retain the `@RestController` annotation, `@RequestMapping` functions can even appear inside handler classes.
+Kleuth also contains a number of helper functions to make route classes even more concise.
+The same route can look like this:
+```kotlin
+@Route
+class GetPizzas(private val service: PizzaService) {
+    fun handler() = ok { service.getAll() }
+} 
+```
 
-Rolling back from Kleuth is easy enough--just remove the Kleuth annotations and add `@RequestMapping` annotations to the route handler function(s).
+This is a significant improvement over the standard method of creating Spring `RestController` classes,
+which can decrease in readability quickly:
+```kotlin
+@RestController
+class PizzaController(private val service: PizzaService) {
+    @GetMapping("/pizzas")
+    fun getPizzas(): ResponseEntity<List<Pizza>> {
+        return ResponseEntity.ok(service.getAll())
+    }
 
-## Developer Setup
+   @PostMapping("/pizzas")
+   fun createPizza(@RequestBody body: Pizza): ResponseEntity<Pizza> {
+      return ResponseEntity(HttpStatus.CREATED, service.create(body))
+   }
+   
+   // ...
 
-#### Ktlint
-Kleuth uses the [JLLeitschuh Ktlint Gradle plugin](https://github.com/JLLeitschuh/ktlint-gradle) to manage Kotlin code linting. 
-The following setup is required when working with the project:
- - Setup the kotlin code style by running `./gradlew ktlintApplyToIdea` to apply it on the Kleuth project, 
-   or `./graldew ktlintApplyToIdeaGlobally` to apply it for every project.
- - Add the ktlint pre-commit hook with `./gradlew addKtlintCheckGitPreCommitHook` 
-   to ensure your PR verify will not fail because of linting errors.
+   @GetMapping("/pizzas/{pizzaId}")
+   fun getPizzaById(@PathVariable pizzaId: UUID): ResponseEntity<Pizza> {
+      return ResponseEntity.ok(service.getById(pizzaId))
+   }
+}
+```
+
+A Kleuth route handler class is also a Spring `RestController`. This means Kleuth functions are completely compatible with Spring RequestMappings. These functions make use of `PathVariable`, `RequestBody`, `RequestParam`, 
+and all other possible Spring function annotations and parameters. If for some reason Kleuth does not support a Spring feature, a `RequestMapping` function can co-exist in a Kleuth route handler class.
+
+## Benefits
+
+### Reduce Spring Boilerplate
+Kleuth REST API routes are created through the directory structure. 
+No more RequestMappings and monolithic Controller classes (Less annotations too!).
+This also means less work!
+
+### De-obfuscate Your REST API Structure
+The structure of a Kleuth-mapped Spring REST API is clear from the package view. 
+Immediately understand the flow of a Kleuth REST API.
+
+### Codify Best Practices and Organization
+Kleuth helps enforce clear and concise development practices and project organization.
+
+___
+
+Check out the docs to learn more!
