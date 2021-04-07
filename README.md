@@ -5,6 +5,7 @@
 
 kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight framework for generating Spring REST API routes dynamically.
 
+Visit the docs at [alien-head.github.io/kleuth](https://alien-head.github.io/kleuth/) or read on to learn more.
 ___
 
 ## How it works
