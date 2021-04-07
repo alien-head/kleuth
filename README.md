@@ -3,7 +3,7 @@
 [![Build](https://github.com/alien-head/kleuth/actions/workflows/pr-verify.yml/badge.svg?event=push)](https://github.com/alien-head/kleuth/actions/workflows/pr-verify.yml)
 [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 
-kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight framework for generating Spring REST API routes dynamically.
+kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight, flexible framework for generating Spring REST API routes dynamically.
 
 Visit the docs at [alien-head.github.io/kleuth](https://alien-head.github.io/kleuth/) or read on to learn more.
 ___
