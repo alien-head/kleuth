@@ -7,7 +7,7 @@ Kleuth uses Spring's `PathVariable` annotation to include path variables in the 
 
 Mark function parameters as path variables the same as if creating the request mapping with the Spring `RequestMapping` annotation:
 ```kotlin title="/pizzas/GetPizzaById.kt"
-@RouteController
+@Route
 class GetPizzaById(
     private val service: PizzaService
 ) {
@@ -22,7 +22,7 @@ The route will map to `/pizzas/{id}`.
 
 Kleuth will also see if the value/name of the `PathVariable` annotation has been set:
 ```kotlin title="/pizzas/GetPizzaById.kt"
-@RouteController
+@Route
 class GetPizzaById(
     private val service: PizzaService
 ) {

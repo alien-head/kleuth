@@ -10,7 +10,7 @@ Kleuth provides helper functions to reduce `ResponseEntity` boilerplate.
 #### Http Status 200
 Before:
 ```kotlin
-@RouteController
+@Route
 class GetPizzas(
     private val service: PizzaService
 ) {
@@ -22,7 +22,7 @@ class GetPizzas(
 
 After:
 ```kotlin
-@RouteController
+@Route
 class GetPizzas(
     private val service: PizzaService
 ) {
@@ -34,7 +34,7 @@ class GetPizzas(
 #### Http Status 204
 Before:
 ```kotlin
-@RouteController
+@Route
 class PutOrder(
     private val service: OrderService
 ) {
@@ -49,7 +49,7 @@ class PutOrder(
 
 After:
 ```kotlin
-@RouteController
+@Route
 class PutOrder(
     private val service: OrderService
 ) {
@@ -77,7 +77,7 @@ return ok { service.get() }
 
 Headers can also be passed in:
 ```kotlin
-@RouteController
+@Route
 class PostOrder(
     private val service: OrderService
 ) {

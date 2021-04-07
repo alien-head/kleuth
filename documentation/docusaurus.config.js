@@ -23,7 +23,7 @@ module.exports = {
           label: 'Docs',
           position: 'left',
         },
-        {to: 'blog', label: 'Blog', position: 'left'},
+//        {to: 'blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/alien-head/kleuth',
           label: 'GitHub',
@@ -71,10 +71,10 @@ module.exports = {
         {
           title: 'More',
           items: [
-            {
-              label: 'Blog',
-              to: 'blog',
-            },
+//            {
+//              label: 'Blog',
+//              to: 'blog',
+//            },
             {
               label: 'GitHub',
               href: 'https://github.com/alien-head/kleuth',
@@ -86,6 +86,7 @@ module.exports = {
     },
     prism: {
       additionalLanguages: ['kotlin'],
+      theme: require('prism-react-renderer/themes/dracula')
     },
   },
   presets: [
@@ -98,12 +99,12 @@ module.exports = {
           editUrl:
             'https://github.com/alienhead/kleuth/edit/master/documentation/',
         },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl:
-            'https://github.com/alienhead/kleuth/edit/master/documentation/blog/',
-        },
+//        blog: {
+//          showReadingTime: true,
+//          // Please change this to your repo.
+//          editUrl:
+//            'https://github.com/alienhead/kleuth/edit/master/documentation/blog/',
+//        },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },

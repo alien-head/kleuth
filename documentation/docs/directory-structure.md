@@ -45,4 +45,4 @@ GET   /pizzas
 GET   /pizzas/{id}
 ```
 
-(`POST  /orders/{id}/delivery-driver/assign` and `PUT   /orders/{id}/delivery-driver/assign` are both defined in the `EditDeliveryDriver` class.)
+(`POST  /orders/{id}/delivery-driver/assign` and `PUT /orders/{id}/delivery-driver/assign` are both defined in the `EditDeliveryDriver` class.)
