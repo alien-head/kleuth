@@ -11,7 +11,7 @@ module.exports = {
   projectName: 'kleuth', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'Kleuth',
+      title: 'Kleuth Framework',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
