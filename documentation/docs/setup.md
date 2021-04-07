@@ -3,7 +3,7 @@ title: Setup
 slug: /
 ---
 
-## Add the Klueth dependency to your project
+## Add the Kleuth dependency to your project
 
 ### Gradle:
 
