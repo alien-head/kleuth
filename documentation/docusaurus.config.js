@@ -7,7 +7,7 @@ module.exports = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'alienhead', // Usually your GitHub org/user name.
+  organizationName: 'alien-head', // Usually your GitHub org/user name.
   projectName: 'kleuth', // Usually your repo name.
   themeConfig: {
     navbar: {
