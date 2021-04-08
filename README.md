@@ -17,7 +17,7 @@ Example:
 
 Classes annotated with `Route` or `RequestMethod` are then used by Kleuth to map the path set in the folder structure to functions.
 
-This is what the `rest/pizzas/GetPizzas.kt` class in the above example looks like:
+This is what the `rest/pizzas/GetPizzas.kt` class in the above example looks like in the "handler" style:
 
 ```kotlin
 @Route
