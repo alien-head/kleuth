@@ -1,6 +1,6 @@
 package io.alienhead.kleuth.routes.api.produces
 
-import io.alienhead.kleuth.annotations.RouteController
+import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.request.Get
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
@@ -14,7 +14,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
 
-@RouteController
+@Route
 class GetProduces {
 
   @Get(produces = "text/csv")

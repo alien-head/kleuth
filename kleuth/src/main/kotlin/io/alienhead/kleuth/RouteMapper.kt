@@ -1,7 +1,7 @@
 package io.alienhead.kleuth
 
+import io.alienhead.kleuth.annotations.RequestMethod
 import io.alienhead.kleuth.annotations.Route
-import io.alienhead.kleuth.annotations.RouteController
 import io.alienhead.kleuth.config.KleuthProperties
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
@@ -17,10 +17,10 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.javaMethod
 
 /**
- * This class is responsible for mapping Kleuth Route and RouteController classes
+ * This class is responsible for mapping Kleuth Request Method or Route classes
  *
  * @param handlerMapping the Spring RequestMappingHandlerMapping instance for creating request mappings
- * @param context the Spring ApplicationContext is used for retrieving the beans of Kleuth Routes and RouteControllers
+ * @param context the Spring ApplicationContext is used for retrieving the beans of Kleuth Request Methods and Routes
  * @param properties the [KleuthProperties] properties needed to map routes.
  */
 class RouteMapper(
@@ -32,7 +32,7 @@ class RouteMapper(
   private val pathCache = PathCache(properties.pathToRoot)
 
   /**
-   * Uses the PostConstruct annotation to complete the mapping of Kleuth Routes and RouteControllers
+   * Uses the PostConstruct annotation to complete the mapping of Kleuth Request Methods and Routes
    */
   @PostConstruct
   internal fun mapRoutes() {
@@ -52,14 +52,14 @@ class RouteMapper(
   }
 
   /**
-   * Gets a list of Kleuth Route or RouteController classes from the Spring ApplicationContext
+   * Gets a list of Kleuth Request Method or Route classes from the Spring ApplicationContext
    */
   private fun getRoutes(): Map<String, Any> {
-    return context.getBeansWithAnnotation(Route::class.java) + context.getBeansWithAnnotation(RouteController::class.java)
+    return context.getBeansWithAnnotation(RequestMethod::class.java) + context.getBeansWithAnnotation(Route::class.java)
   }
 
   /**
-   * Processes a list of Kleuth Routes and RouteControllers for request mappings
+   * Processes a list of Kleuth Request Methods and Routes for request mappings
    *
    * @param routes a list of beans
    */
@@ -86,8 +86,8 @@ class RouteMapper(
    */
   private fun getRoutesWithOverride(routes: List<RouteHandler>) =
     routes.filter {
-      !(it.handlerInstance::class.findAnnotation<Route>()?.path.isNullOrEmpty()) ||
-        !(it.handlerInstance::class.findAnnotation<RouteController>()?.path.isNullOrEmpty())
+      !(it.handlerInstance::class.findAnnotation<RequestMethod>()?.path.isNullOrEmpty()) ||
+        !(it.handlerInstance::class.findAnnotation<Route>()?.path.isNullOrEmpty())
     }
 
   /**
@@ -112,7 +112,7 @@ class RouteMapper(
    * Parses a [RouteHandler] instance for request method handler functions and maps those functions
    *
    * @param routeHandler a [RouteHandler] instance
-   * @param override tells whether the path has been overridden on the [Route] or [RouteController] annotation.
+   * @param override tells whether the path has been overridden on the [RequestMethod] or [Route] annotation.
    *
    * @see [RouteHandler]
    */
@@ -126,8 +126,8 @@ class RouteMapper(
 
     // We only need to build a path using the first function because they should all have the same route
     val path = if (override) {
-      routeHandler.handlerInstance::class.findAnnotation<Route>()?.path
-        ?: routeHandler.handlerInstance::class.findAnnotation<RouteController>()?.path
+      routeHandler.handlerInstance::class.findAnnotation<RequestMethod>()?.path
+        ?: routeHandler.handlerInstance::class.findAnnotation<Route>()?.path
     } else {
       pathCache.getOrCache(routeHandler.path, requestMethodHandlers.first())
     }

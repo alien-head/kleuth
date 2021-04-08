@@ -3,12 +3,12 @@ package io.alienhead.kleuth.annotations.request
 import org.springframework.http.MediaType
 
 /**
- * Used to denote a function as a handler for this http request method in a Route or RouteController class
+ * Used to denote a function as a handler for this http request method in a RequestMethod or Route class
  *
  * @param produces Used to override the default produces value for the request mapping
  * @param consumes Used to override the default consumes value for the request mapping
  *
- * @see RouteController
+ * @see Route
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention

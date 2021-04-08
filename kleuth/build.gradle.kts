@@ -37,8 +37,8 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
-group = "io.alienhead"
-version = "0.9.0-SNAPSHOT"
+group = "io.alienhead.kleuth"
+version = "1.0.0"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -68,17 +68,17 @@ java {
 publishing {
   publications {
     create<MavenPublication>("mavenJava") {
-      groupId = "io.alienhead"
-      artifactId = "kleuth"
-      version = "0.9.0"
+      groupId = "io.alienhead.kleuth"
+      artifactId = "kleuth-framework"
+      version = "1.0.0"
 
       from(components["java"])
       artifact(tasks.getAt("dokkaJar"))
 
       pom {
-        name.set("Kleuth")
+        name.set("Kleuth Framework")
         description.set("A framework for dynamically creating Spring Rest Controllers.")
-        url.set("https://github.com/alien-head/kleuth")
+        url.set("https://alien-head.github.io/kleuth/")
         licenses {
           license {
             name.set("The Apache License, Version 2.0")
