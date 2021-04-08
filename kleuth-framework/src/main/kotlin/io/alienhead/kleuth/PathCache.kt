@@ -47,7 +47,7 @@ class PathCache(private val pathToRoot: String) {
     }
 
     if (matchingPathInfo != null) {
-      setPath = setPath.replace(matchingPathInfo.originalPath, matchingPathInfo.newPath)
+      setPath = setPath.replace(matchingPathInfo.originalPath.toKebabCase(), matchingPathInfo.newPath)
       // It's possible the user has more path variables than the matching cached path
       val missingPathVariables = routePathVariables - matchingPathInfo.pathVariables
 
@@ -58,9 +58,6 @@ class PathCache(private val pathToRoot: String) {
 
         // This path must be cached since it has additional path variables
         pathCache.add(PathInfo(matchingPathInfo.originalPath, setPath, routePathVariables))
-      } else {
-        // This route's path and path variables are the same as another so we do not cache again.
-        setPath = matchingPathInfo.newPath
       }
     } else {
       // We did not find an existing path, so this one is new and must be cached.

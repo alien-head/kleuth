@@ -63,6 +63,16 @@ class EverythingTests(mvc: MockMvc) : DescribeSpec() {
             .andExpect(jsonPath("$.member", `is`("testId: 1234")))
         }
 
+        it("should map request to nested handler") {
+          mvc.perform(
+            get("/path-variables/{testId}/child", "1234")
+              .contentType(MediaType.APPLICATION_JSON)
+          )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.member", `is`("Child with testId: 1234")))
+        }
+
         it("should map request to handler with two path variables") {
           mvc.perform(
             get("/path-variables/{testId}/child/{childId}", "1234", "4321")
