@@ -61,6 +61,10 @@ tasks.create("dokkaJar", Jar::class.java) {
   this.from(tasks.getAt("dokkaJavadoc"))
 }
 
+tasks.publish {
+  dependsOn(project.tasks.build)
+}
+
 java {
   withSourcesJar()
 }
@@ -100,16 +104,25 @@ publishing {
       }
     }
   }
+
+  repositories {
+    maven {
+      val ossrhUsername: String? by project
+      val ossrhPassword: String? by project
+
+      url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+      credentials {
+        username = ossrhUsername
+        password = ossrhPassword
+      }
+    }
+  }
 }
 
 signing {
-  setRequired({
-    gradle.taskGraph.hasTask("publish")
-  })
-
-  val signingKeyId: String? by project
   val signingKey: String? by project
   val signingPassword: String? by project
-  useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+
+  useInMemoryPgpKeys(signingKey, signingPassword)
   sign(publishing.publications["mavenJava"])
 }

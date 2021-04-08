@@ -1,5 +1,5 @@
 rootProject.name = "kleuth-parent"
-include("kleuth")
+include("kleuth-framework")
 include("kleuth-integration-tests")
 
 pluginManagement {
