@@ -1,6 +1,5 @@
 package io.alienhead.kleuth
 
-import net.pearx.kasechange.toKebabCase
 import org.springframework.web.bind.annotation.PathVariable
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.findAnnotation
@@ -22,10 +21,10 @@ class PathCache(private val pathToRoot: String) {
   internal fun getOrCache(originalPath: String, handlerFunction: KFunction<*>): String {
     var setPath = originalPath
     /*
-          Get all the names of path variables in the route handler.
-          Spring allows the user to specify a name or value instead of the parameter name for mapping purposes
-          so we have to check if those are set
-         */
+     * Get all the names of path variables in the route handler.
+     * Spring allows the user to specify a name or value instead of the parameter name for mapping purposes
+     * so we have to check if those are set
+     */
     val routePathVariables: List<String> = handlerFunction.parameters.mapNotNull { parameter ->
       parameter.findAnnotation<PathVariable>()?.let { pathVariable ->
         when {
@@ -36,28 +35,27 @@ class PathCache(private val pathToRoot: String) {
       }
     }
 
-    setPath = setPath.toKebabCase()
+    setPath = setPath.kebabCase()
 
-    /*
-      Check if there is a path already for the original path (folder path)
-      that also includes the same path variables
-     */
-    val matchingPathInfo = pathCache.firstOrNull { pathInfo ->
-      setPath.contains(pathInfo.originalPath.toKebabCase()) && routePathVariables.containsAll(pathInfo.pathVariables)
-    }
+    val matchingPathInfo = bestMatchingPath(setPath, routePathVariables)
 
     if (matchingPathInfo != null) {
-      setPath = setPath.replace(matchingPathInfo.originalPath.toKebabCase(), matchingPathInfo.newPath)
+      setPath = setPath.replace(matchingPathInfo.originalPath.kebabCase(), matchingPathInfo.newPath)
+
       // It's possible the user has more path variables than the matching cached path
       val missingPathVariables = routePathVariables - matchingPathInfo.pathVariables
 
-      if (missingPathVariables.isNotEmpty()) {
-        // If there are any path variables not found in the matched info,
-        // then they must be appended to the path
-        setPath += missingPathVariables.appendToPath()
+      if (missingPathVariables.isNotEmpty() || setPath != matchingPathInfo.newPath) {
+        /* If there are any path variables not found in the matched info,
+         * or the path is longer,
+         * then they must be appended to the path
+         */
+        val pathWithVariables = setPath + missingPathVariables.appendToPath()
 
         // This path must be cached since it has additional path variables
-        pathCache.add(PathInfo(matchingPathInfo.originalPath, setPath, routePathVariables))
+        pathCache.add(PathInfo(originalPath.kebabCase(), pathWithVariables, routePathVariables))
+
+        setPath = pathWithVariables
       }
     } else {
       // We did not find an existing path, so this one is new and must be cached.
@@ -68,7 +66,30 @@ class PathCache(private val pathToRoot: String) {
 
       setPath = newPath
     }
-
     return setPath.removeRootPathFromPath(pathToRoot)
+  }
+
+  /**
+   *   Check if there is a path already for the original path (folder path)
+   *   that also includes the same path variables
+   *
+   *   @param pathToMatch the path to be checked against
+   *   @param pathVariables the list of path variables in the route to check
+   */
+  private fun bestMatchingPath(pathToMatch: String, pathVariables: List<String>): PathInfo? {
+    val matchingPaths = pathCache.filter { pathInfo ->
+      pathToMatch.contains(pathInfo.originalPath.kebabCase()) && pathVariables.containsAll(pathInfo.pathVariables)
+    }
+
+    // The longest path and most path variables should be the immediate "parent" path
+    return matchingPaths
+      .sortedWith(
+        compareBy(
+          { it.originalPath.length },
+          { it.pathVariables.size }
+        )
+      )
+      .reversed()
+      .firstOrNull()
   }
 }

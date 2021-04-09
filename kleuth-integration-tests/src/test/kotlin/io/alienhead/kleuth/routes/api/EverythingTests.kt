@@ -82,6 +82,27 @@ class EverythingTests(mvc: MockMvc) : DescribeSpec() {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.member", `is`("testId: 1234, childId: 4321")))
         }
+
+        it("should map request to handler with three path variables") {
+          mvc.perform(
+            get("/path-variables/{testId}/child/{childId}/nested-child/{nestedChildId}", "1234", "4321", "5678")
+              .contentType(MediaType.APPLICATION_JSON)
+          )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.member", `is`("testId: 1234, childId: 4321, nestedChildId: 5678")))
+        }
+
+        it("should map post request to handler with three path variables and post method") {
+          mvc.perform(
+            post("/path-variables/{testId}/child/{childId}/nested-child/{nestedChildId}", "1234", "4321", "5678")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(ObjectMapper().writeAsString(TestResource("test")))
+          )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.member", `is`("1234, 4321, 5678, test")))
+        }
       }
 
       describe("/separate") {
