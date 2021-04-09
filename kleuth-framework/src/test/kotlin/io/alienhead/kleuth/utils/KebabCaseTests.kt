@@ -1,6 +1,5 @@
 package io.alienhead.kleuth.utils
 
-import io.alienhead.kleuth.kebabCase
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 

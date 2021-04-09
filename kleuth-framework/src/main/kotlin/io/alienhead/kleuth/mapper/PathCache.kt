@@ -1,5 +1,8 @@
-package io.alienhead.kleuth
+package io.alienhead.kleuth.mapper
 
+import io.alienhead.kleuth.utils.appendToPath
+import io.alienhead.kleuth.utils.kebabCase
+import io.alienhead.kleuth.utils.removeRootPathFromPath
 import org.springframework.web.bind.annotation.PathVariable
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.findAnnotation

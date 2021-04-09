@@ -1,4 +1,4 @@
-package io.alienhead.kleuth
+package io.alienhead.kleuth.mapper
 
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.RequestMethod

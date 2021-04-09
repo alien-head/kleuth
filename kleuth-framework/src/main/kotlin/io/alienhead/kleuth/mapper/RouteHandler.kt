@@ -1,4 +1,4 @@
-package io.alienhead.kleuth
+package io.alienhead.kleuth.mapper
 
 /**
  * The object that stores the route handler class and path for mapping

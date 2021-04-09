@@ -1,9 +1,11 @@
-package io.alienhead.kleuth
+package io.alienhead.kleuth.mapper
 
 import io.alienhead.kleuth.annotations.request.Delete
 import io.alienhead.kleuth.annotations.request.Get
 import io.alienhead.kleuth.annotations.request.Post
 import io.alienhead.kleuth.annotations.request.Put
+import io.alienhead.kleuth.utils.ofRequestMethod
+import io.alienhead.kleuth.utils.toPath
 import org.springframework.web.bind.annotation.PathVariable
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions

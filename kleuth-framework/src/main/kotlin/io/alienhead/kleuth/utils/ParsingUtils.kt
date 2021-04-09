@@ -1,4 +1,4 @@
-package io.alienhead.kleuth
+package io.alienhead.kleuth.utils
 
 import io.alienhead.kleuth.annotations.request.Delete
 import io.alienhead.kleuth.annotations.request.Get

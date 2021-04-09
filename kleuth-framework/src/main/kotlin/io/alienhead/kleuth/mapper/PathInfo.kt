@@ -1,4 +1,4 @@
-package io.alienhead.kleuth
+package io.alienhead.kleuth.mapper
 
 /**
  * A class that stores the context of a path for mapping other paths
