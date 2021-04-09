@@ -20,9 +20,9 @@ The `pizzas` directory in the example corresponds to the url `/pizzas`.
 ### Hyphens
 If there are multiple words in a path segment, it is conventional to separate them with hyphens (`-`).
 Kotlin and Java do not allow for hyphens in directory names. 
-Kleuth takes any common casing style (camel, snake, etc.) and converts it to hyphen-separated.
+Use [camel case](https://en.wikipedia.org/wiki/Camel_case#:~:text=Camel%20case%20(sometimes%20stylized%20as,word%20starting%20with%20either%20case.) in a directory name and Kleuth will convert it to hyphenated (also known as [kebab case](https://en.wikipedia.org/wiki/Kebab_case)
 
-In the example, the directory `deliveryDriver` will be converted to `/delivery-driver`.
+In the example, the directory `deliveryDriver` will be converted to `delivery-driver`.
 
 ### Overriding the Path
 If for some reason the directory structure cannot match the REST API, the path can be manually set in the request handler class.
