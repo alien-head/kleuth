@@ -19,8 +19,8 @@ The `pizzas` directory in the example corresponds to the url `/pizzas`.
 
 ### Hyphens
 If there are multiple words in a path segment, it is conventional to separate them with hyphens (`-`).
-Kotlin and Java do not allow for hyphens in directory names. 
-Use [camel case](https://en.wikipedia.org/wiki/Camel_case) in a directory name and Kleuth will convert it to hyphenated (also known as [kebab case](https://en.wikipedia.org/wiki/Kebab_case)
+Kotlin and Java do not allow for hyphens in package names. 
+Use [camel case](https://en.wikipedia.org/wiki/Camel_case) in a directory name and Kleuth will convert it to hyphenated (also known as [kebab case](https://en.wikipedia.org/wiki/Kebab_case)).
 
 In the example, the directory `deliveryDriver` will be converted to `delivery-driver`.
 
