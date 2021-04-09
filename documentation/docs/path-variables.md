@@ -3,7 +3,7 @@ title: Path Variables
 slug: /framework/path-variables
 ---
 
-Kleuth uses Spring's `PathVariable` annotation to include path variables in the url path.
+Like `RequestBody`, Kleuth uses Spring's `PathVariable` annotation to include path variables in the url path.
 
 Mark function parameters as path variables the same as if creating the request mapping with the Spring `RequestMapping` annotation:
 ```kotlin title="/pizzas/GetPizzaById.kt"
