@@ -1,10 +1,9 @@
-package io.alienhead.kleuth
+package io.alienhead.kleuth.utils
 
 import io.alienhead.kleuth.annotations.request.Delete
 import io.alienhead.kleuth.annotations.request.Get
 import io.alienhead.kleuth.annotations.request.Post
 import io.alienhead.kleuth.annotations.request.Put
-import net.pearx.kasechange.toKebabCase
 import org.springframework.web.bind.annotation.RequestMethod
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.findAnnotation
@@ -95,7 +94,7 @@ internal fun String.toPath(className: String) = this.removeClassName(className).
  *
  * @param rootPath a package path
  */
-internal fun String.removeRootPathFromPath(rootPath: String) = this.replace(rootPath.toKebabCase(), "")
+internal fun String.removeRootPathFromPath(rootPath: String) = this.replace(rootPath.kebabCase(), "")
 
 /**
  * Removes the class name from the string
@@ -108,3 +107,32 @@ internal fun String.removeClassName(className: String) = this.replace(".$classNa
  * Replaces the package separator "." with a backslash
  */
 internal fun String.replacePackageSeparator() = this.replace(".", "/")
+
+/**
+ * Replaces uppercase letters with "-LOWER_CASE_LETTER" ignoring pathVariables.
+ * Example:
+ *  route/pascalCase/{pathVariable}
+ *  becomes
+ *  route/pascal-case/{pathVariable}
+ */
+internal fun String.kebabCase(): String {
+  var buildString = ""
+
+  for (i in this.toCharArray().withIndex()) {
+    var charToAdd = i.value.toString()
+
+    if (i.value.isUpperCase()) {
+      val substring = this.substring(0, i.index)
+
+      if (substring.contains("{")) {
+        if (substring.lastIndexOf("}") > substring.lastIndexOf("{")) {
+          charToAdd = "-${i.value.toLowerCase()}"
+        }
+      } else {
+        charToAdd = "-${i.value.toLowerCase()}"
+      }
+    }
+    buildString += charToAdd
+  }
+  return buildString
+}

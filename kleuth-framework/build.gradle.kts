@@ -28,8 +28,6 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
-  implementation("net.pearx.kasechange:kasechange:1.3.0")
-
   testImplementation("io.kotest:kotest-runner-junit5:4.3.2")
 
   testImplementation("io.kotest:kotest-assertions-core:4.3.2")
@@ -38,7 +36,7 @@ dependencies {
 }
 
 group = "io.alienhead.kleuth"
-version = "1.0.0"
+version = "1.0.1"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -74,7 +72,7 @@ publishing {
     create<MavenPublication>("mavenJava") {
       groupId = "io.alienhead.kleuth"
       artifactId = "kleuth-framework"
-      version = "1.0.0"
+      version = "1.0.1"
 
       from(components["java"])
       artifact(tasks.getAt("dokkaJar"))

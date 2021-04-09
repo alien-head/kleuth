@@ -1,6 +1,6 @@
 package io.alienhead.kleuth.config
 
-import io.alienhead.kleuth.RouteMapper
+import io.alienhead.kleuth.mapper.RouteMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext
