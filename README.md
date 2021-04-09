@@ -1,6 +1,7 @@
 # Kleuth
 
 [![Build](https://github.com/alien-head/kleuth/actions/workflows/pr-verify.yml/badge.svg?event=push)](https://github.com/alien-head/kleuth/actions/workflows/pr-verify.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/io.alienhead.kleuth/kleuth-framework.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.alienhead.kleuth%22%20AND%20a:%22kleuth-framework%22)
 [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 
 kotlin + sleuth = kleuth 🕵️‍♂️ . A lightweight, flexible framework for generating Spring REST API routes dynamically.
