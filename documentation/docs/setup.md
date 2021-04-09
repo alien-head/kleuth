@@ -8,7 +8,7 @@ slug: /
 ### Gradle:
 
 ```kotlin title="build.gradle.kts"
-implementation("io.alienhead:kleuth")
+implementation("io.alienhead.kleuth:kleuth-framework")
 ```
 
 ## Enable Kleuth on the Application class
