@@ -11,9 +11,9 @@ slug: /
 implementation("io.alienhead.kleuth:kleuth-framework")
 ```
 
-## Enable Kleuth on the Application class
+## Optional: Enable Kleuth on the Application class
 
-Add the Kleuth Autoconfiguration annotation `@EnableKleuth` to the main `Application` class.
+Kleuth will autoconfigure by default, but you can also manually add the annotation `@EnableKleuth` to the main `Application` class.
 
 ```kotlin title="Application.kt"
 @EnableKleuth
