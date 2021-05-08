@@ -36,7 +36,7 @@ dependencies {
 }
 
 group = "io.alienhead.kleuth"
-version = "1.0.1"
+version = "1.0.2"
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -72,7 +72,7 @@ publishing {
     create<MavenPublication>("mavenJava") {
       groupId = "io.alienhead.kleuth"
       artifactId = "kleuth-framework"
-      version = "1.0.1"
+      version = "1.0.2"
 
       from(components["java"])
       artifact(tasks.getAt("dokkaJar"))
