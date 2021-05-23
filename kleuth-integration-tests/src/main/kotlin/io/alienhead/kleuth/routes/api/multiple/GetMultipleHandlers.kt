@@ -1,7 +1,7 @@
 package io.alienhead.kleuth.routes.api.multiple
 
-import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.request.Post
+import io.alienhead.kleuth.annotations.routing.Route
 import io.alienhead.kleuth.resource.TestResource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody

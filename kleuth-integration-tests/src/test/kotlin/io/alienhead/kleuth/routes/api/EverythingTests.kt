@@ -174,7 +174,7 @@ class EverythingTests(mvc: MockMvc) : DescribeSpec() {
       }
 
       describe("/consumes") {
-        it("should map get request to handler and override default produces") {
+        it("should map get request to handler and override default consumes") {
           mvc.perform(
             post("/consumes")
               .contentType(MediaType.TEXT_PLAIN)
@@ -195,6 +195,19 @@ class EverythingTests(mvc: MockMvc) : DescribeSpec() {
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", `is`("Deleted 1234")))
+        }
+      }
+
+      describe("/content") {
+        it("should map get request to handler and override default consumes") {
+          mvc.perform(
+            get("/content")
+              .contentType(MediaType.TEXT_PLAIN)
+              .content("1234")
+          )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(content().string("1234"))
         }
       }
     }

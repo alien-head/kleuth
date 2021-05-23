@@ -1,7 +1,7 @@
 package io.alienhead.kleuth.routes.api.produces
 
-import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.request.Get
+import io.alienhead.kleuth.annotations.routing.Route
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.springframework.core.io.InputStreamResource

@@ -1,7 +1,7 @@
 package io.alienhead.kleuth.routes.api.consumes
 
-import io.alienhead.kleuth.annotations.Route
 import io.alienhead.kleuth.annotations.request.Post
+import io.alienhead.kleuth.annotations.routing.Route
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 

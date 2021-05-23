@@ -1,7 +1,7 @@
 package io.alienhead.kleuth.mapper
 
-import io.alienhead.kleuth.annotations.RequestMethod
-import io.alienhead.kleuth.annotations.Route
+import io.alienhead.kleuth.annotations.routing.RequestMethod
+import io.alienhead.kleuth.annotations.routing.Route
 import io.alienhead.kleuth.config.KleuthProperties
 import io.alienhead.kleuth.utils.findRequestMethodAnnotation
 import io.alienhead.kleuth.utils.getProducesConsumes

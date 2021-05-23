@@ -1,6 +1,6 @@
 package io.alienhead.kleuth.routes.api.single
 
-import io.alienhead.kleuth.annotations.Route
+import io.alienhead.kleuth.annotations.routing.Route
 import io.alienhead.kleuth.resource.TestResource
 import org.springframework.http.ResponseEntity
 

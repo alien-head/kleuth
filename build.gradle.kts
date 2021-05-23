@@ -12,3 +12,7 @@ repositories {
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
   disabledRules.set(setOf("final-newline"))
 }
+
+tasks.build {
+  dependsOn("ktlintFormat")
+}
