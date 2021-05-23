@@ -1,4 +1,4 @@
-package io.alienhead.kleuth.annotations
+package io.alienhead.kleuth.annotations.routing
 
 /**
  * Used to denote a class as a Kleuth route when the class name is an http request method (Get, Post, Put).

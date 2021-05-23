@@ -1,4 +1,4 @@
-package io.alienhead.kleuth.annotations
+package io.alienhead.kleuth.annotations.routing
 
 import org.springframework.web.bind.annotation.RestController
 

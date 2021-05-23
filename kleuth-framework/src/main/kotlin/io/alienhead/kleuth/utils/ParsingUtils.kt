@@ -1,5 +1,6 @@
 package io.alienhead.kleuth.utils
 
+import io.alienhead.kleuth.annotations.request.Content
 import io.alienhead.kleuth.annotations.request.Delete
 import io.alienhead.kleuth.annotations.request.Get
 import io.alienhead.kleuth.annotations.request.Post
@@ -61,7 +62,9 @@ internal fun String.ofRequestMethod(strictEquality: Boolean = false): RequestMet
  * Gets the produces and consumes values if they are set on the Request Method Annotation
  */
 internal fun KFunction<*>.getProducesConsumes() =
-  this.findAnnotation<Get>()?.let { annotation ->
+  this.findAnnotation<Content>()?.let { annotation ->
+    Pair(annotation.produces, annotation.consumes)
+  } ?: this.findAnnotation<Get>()?.let { annotation ->
     Pair(annotation.produces, annotation.consumes)
   } ?: this.findAnnotation<Post>()?.let { annotation ->
     Pair(annotation.produces, annotation.consumes)
